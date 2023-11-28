@@ -124,9 +124,9 @@ class TRACE(nn.Module):
         
         return seq_outputs, tracking_results, kp3d_results, imgpaths
 
-    def save_results(self, outputs, tracking_results, kp3d_results, imgpaths):
+    def save_results(self, outputs, tracking_results, kp3d_results, imgpaths, save_path=None):
         for seq_name in outputs:
-            save_paths = preds_save_paths(self.results_save_dir, prefix=seq_name)
+            save_paths = preds_save_paths(save_path, prefix=seq_name)
             np.savez(save_paths.seq_results_save_path, outputs=remove_large_keys(outputs[seq_name]), imgpaths=imgpaths[seq_name])
             np.savez(save_paths.seq_tracking_results_save_path, tracking=tracking_results[seq_name], kp3ds=kp3d_results[seq_name])
             if self.save_video:
@@ -138,7 +138,7 @@ def main():
     if args.mode == 'video':
         sequence_dict = prepare_video_frame_dict([args.input], img_ext='jpg', frame_dir=args.save_path)
         outputs, tracking_results, kp3d_results, imgpaths = trace(sequence_dict)
-        trace.save_results(outputs, tracking_results, kp3d_results, imgpaths)
+        trace.save_results(outputs, tracking_results, kp3d_results, imgpaths,args.save_path)
 
 if __name__ == '__main__':
     main()
